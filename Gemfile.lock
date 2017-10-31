@@ -66,6 +66,7 @@ GEM
     pry-byebug (3.5.0)
       byebug (~> 9.1)
       pry (~> 0.10)
+    psych (2.2.2)
     regexp_parser (0.4.6)
     rspec-core (3.6.0)
       rspec-support (~> 3.6.0)
@@ -98,6 +99,7 @@ DEPENDENCIES
   mutant!
   mutant-rspec
   pry-byebug
+  psych
   rspec-expectations
   rspec-mocks
   simplecov
