@@ -17,31 +17,56 @@ module MealPlan
 
     context 'changing number of days' do
       it 'adding days will increase number of days' do
-        old_value = empty_plan.no_of_days
-        empty_plan.no_of_days += 3
-        expect(empty_plan.no_of_days).to eql(old_value + 3)
+        expect { empty_plan.no_of_days += 3 }
+          .to change { empty_plan.no_of_days  }.by(3)
       end
 
       it 'removing days will decrease number of days' do
-        old_value = empty_plan.no_of_days
-        empty_plan.no_of_days -= 3
-        expect(empty_plan.no_of_days).to eql(old_value - 3)
+        expect { empty_plan.no_of_days -= 3 }
+          .to change { empty_plan.no_of_days  }.by(-3)
+      end
+
+      it 'will fail to change day amount if given amount is below minimum' do
+        min = Plan::MIN_DAYS
+        max = Plan::MAX_DAYS
+        error_message = "Day amount must be between #{min} and #{max}."
+        expect { empty_plan.no_of_days = min - 1 }
+          .to raise_error(DayAmountError, error_message)
+      end
+
+      it 'will fail to change day amount if given amount is above maximum' do
+        min = Plan::MIN_DAYS
+        max = Plan::MAX_DAYS
+        error_message = "Day amount must be between #{min} and #{max}."
+        expect { empty_plan.no_of_days = max + 1 }
+          .to raise_error(DayAmountError, error_message)
+      end
+
+      it 'works when new amount is exact minimum' do
+        min = Plan::MIN_DAYS
+        empty_plan.no_of_days = min
+        expect(empty_plan.no_of_days).to eql(min)
+      end
+
+      it 'works when new amount is exact maximum' do
+        max = Plan::MAX_DAYS
+        empty_plan.no_of_days = max
+        expect(empty_plan.no_of_days).to eql(max)
       end
     end
 
     context 'working with days' do
       it 'changes indexes of days without changing objects' do
-        day = empty_plan.select_day(1)
-        empty_plan.switch_days(1, 4)
-        expect(empty_plan.select_day(4)).to equal(day)
+        first = empty_plan.select_day(1)
+        second = empty_plan.select_day(4)
+        expect(empty_plan.switch_days(1, 4)).to switch_items(first, second)
       end
 
       it 'can clear all days' do
         day = empty_plan.select_day(0)
         day.add_meal(meal)
-        count = day.meals
         empty_plan.clear_all_days
-        expect(day.meals).not_to eq(count)
+        expect(day.meals).to be_zero
       end
 
       it 'average meals per day calculation' do
@@ -52,15 +77,19 @@ module MealPlan
       end
 
       it 'average calories per day calculation' do
-        meal.add_product(first_product, 100)
+        amount = 100
+        meal.add_product(first_product, amount)
         empty_plan.each { |day| day.add_meal(meal) }
-        expect(empty_plan.avg_calories).to eq((11 * 4))
+        expect(empty_plan.avg_calories).to have_calories(first_product.carbs,
+          first_product.protein, first_product.fat, amount)
       end
 
       it 'rounds average calories correctly' do
-        meal.add_product(second_product, 100)
+        amount = 100
+        meal.add_product(second_product, amount)
         empty_plan.each { |day| day.add_meal(meal) }
-        expect(empty_plan.avg_calories).to eq(25.5 * 4 + 0.8 * 9)
+        expect(empty_plan.avg_calories).to have_calories(second_product.carbs,
+          second_product.protein, second_product.fat, amount)
       end
     end
   end

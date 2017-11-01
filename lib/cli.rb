@@ -6,11 +6,13 @@ require_relative 'meal_plan/day_amount_error'
 
 # Command line interface class for Meal Plan application
 class CLI
+  DATA_FILE = 'user_data.yml'
   @current_user = nil
   @input = nil
 
   # Starting method of CLI
   def self.start
+    MealPlan::UserData.load(DATA_FILE)
     greeting
     menu_main
     run_start
@@ -51,7 +53,6 @@ class CLI
     # main cli loop
     def run_start
       # Load user data
-      MealPlan::UserData.load
       loop do
         user_input
         case @input
@@ -82,8 +83,8 @@ class CLI
         when '0'
           # exit program
           # Save user data
-          MealPlan::UserData.save
           puts 'Bye'
+          on_exit
           break
 
         else
@@ -188,6 +189,10 @@ class CLI
       max = MealPlan::Plan::MAX_DAYS
       print "Enter amount of days (#{min} to #{max}):"
       gets.chomp
+    end
+
+    def on_exit
+      File.open(DATA_FILE, 'w') { |file| file.write(MealPlan::UserData.save) }
     end
   end
 end

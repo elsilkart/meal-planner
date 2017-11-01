@@ -17,3 +17,15 @@ RSpec.configure do |config|
     Timeout.timeout(5, &example)
   end
 end
+
+RSpec::Matchers.define :switch_items do |first, second|
+  match do |items|
+    items[0].equal?(second) && items[1].equal?(first)
+  end
+end
+
+RSpec::Matchers.define :have_calories do |carbs, protein, fat, amount|
+  match do |actual|
+    actual == (((carbs + protein) * 4 + fat * 9) * amount / 100.0).round(1)
+  end
+end

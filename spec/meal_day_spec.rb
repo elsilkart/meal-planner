@@ -17,16 +17,15 @@ module MealPlan
         expect(meal_day.meals).to eq(1)
       end
 
+      it 'can access meals' do
+        meal_day.add_meal(meal)
+        expect(meal_day.select_meal(0)).to be(meal)
+      end
+
       it 'meals can be removed' do
         meal_day.add_meal(meal)
         meal_day.remove_meal(0)
         expect(meal_day.meals).to eq(0)
-      end
-
-      it 'meals can be accessed' do
-        meal_day.add_meal(meal)
-        meal = meal_day.select_meal(0)
-        expect(meal).to be_instance_of(Meal)
       end
     end
 
@@ -34,22 +33,25 @@ module MealPlan
       it 'can be cleared all at once' do
         5.times { meal_day.add_meal(meal) }
         meal_day.clear
-        expect(meal_day.meals).to eq(0)
+        expect(meal_day.meals).to be_zero
       end
 
       it 'can switch two meals' do
-        meal_day.add_meal(Meal.new('Tuna'))
-        meal_day.add_meal(Meal.new('Salmon'))
-        meal_day.switch_meals(0, 1)
-        expect(meal_day.select_meal(0).name).to eq('Salmon')
+        first = Meal.new('Tuna')
+        second = Meal.new('Salmon')
+        meal_day.add_meal(first)
+        meal_day.add_meal(second)
+        expect(meal_day.switch_meals(0, 1)).to switch_items(first, second)
       end
     end
 
     context 'nutrition' do
       it 'counts calories correctly' do
-        meal.add_product(product, 100)
+        amount = 100
+        meal.add_product(product, amount)
         meal_day.add_meal(meal)
-        expect(meal_day.calories).to eq((12 + 7) * 4 + 4 * 9)
+        expect(meal_day.calories).to have_calories(product.carbs, 
+          product.protein, product.fat, amount)
       end
     end
   end

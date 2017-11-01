@@ -7,6 +7,8 @@ module MealPlan
     let(:password) { 'pw' }
     let(:user) { described_class.new(username, password) }
     let(:data) { UserData }
+    let(:days) { 14 }
+    let(:meal_plan) { user.create_meal_plan(days) }
 
     context 'creation' do
       it 'username length can\'t be less than 1' do
@@ -35,6 +37,10 @@ module MealPlan
           .to raise_error(UsernameError, message)
         data.remove_user(username)
       end
+
+      it 'meal plan does not exist' do
+        expect(user.meal_plan).to be nil
+      end
     end
 
     context 'object fields' do
@@ -49,8 +55,8 @@ module MealPlan
 
     context 'meal plan' do
       it ' has correct number of days' do
-        meal_plan = user.create_meal_plan(14)
-        expect(meal_plan.no_of_days).to eq(14)
+        meal_plan = user.create_meal_plan(days)
+        expect(meal_plan.no_of_days).to eq(days)
       end
     end
   end

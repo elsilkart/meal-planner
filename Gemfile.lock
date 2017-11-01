@@ -68,6 +68,10 @@ GEM
       pry (~> 0.10)
     psych (2.2.2)
     regexp_parser (0.4.6)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
     rspec-core (3.6.0)
       rspec-support (~> 3.6.0)
     rspec-expectations (3.6.0)
@@ -100,8 +104,7 @@ DEPENDENCIES
   mutant-rspec
   pry-byebug
   psych
-  rspec-expectations
-  rspec-mocks
+  rspec
   simplecov
 
 BUNDLED WITH

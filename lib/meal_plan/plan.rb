@@ -10,12 +10,7 @@ module MealPlan
 
     def initialize(days)
       @days = []
-      if days >= MIN_DAYS && days <= MAX_DAYS
-        days.times { @days << MealDay.new }
-      else
-        raise DayAmountError,
-              "Day amount must be between #{MIN_DAYS} and #{MAX_DAYS}."
-      end
+      self.no_of_days = days
     end
 
     def no_of_days

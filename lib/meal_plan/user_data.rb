@@ -19,17 +19,17 @@ module MealPlan
     end
 
     def self.correct_password?(username, password)
-      @users[username].password == password
+      @users.fetch(username).password.eql?(password)
     end
 
     def self.authenticate(username, password)
-      raise MealPlan::AuthenticationError, 'User not found' unless
+      raise AuthenticationError, 'User not found' unless
              search(username)
 
       unless correct_password?(username, password)
-        raise MealPlan::AuthenticationError, 'Invalid username or password.'
+        raise AuthenticationError, 'Invalid username or password.'
       end
-      @users[username]
+      @users.fetch(username)
     end
 
     def self.valid_length?(username)
@@ -38,9 +38,9 @@ module MealPlan
       size > 0 && size < 21
     end
 
-    def self.invalid_symbols?(username)
+    def self.valid_symbols?(username)
       # symbol test (only alphanumeric symbols)
-      (username =~ /\A[[:alnum:]]+\z/) != 0
+      (username =~ /\A[[:alnum:]]+\z/).equal?(0)
     end
 
     def self.unique_username?(username)
@@ -49,12 +49,19 @@ module MealPlan
     end
 
     def self.save
-      File.open('user_data.yml', 'w') { |file| file.write(Psych.dump(@users)) }
+      Psych.dump(@users)
     end
 
-    def self.load
-      file_name = 'user_data.yml'
-      @users = Psych.load(File.open(file_name, 'r')) if File.exist?(file_name)
+    def self.load(file_name)
+      @users = Psych.load(File.open(file_name)) if File.exist?(file_name)
+    end
+
+    def self.clear
+      @users.clear
+    end
+
+    def self.size
+      @users.size
     end
   end
 end

@@ -1,0 +1,10 @@
+---
+u0: !ruby/object:MealPlan::User
+  username: u0
+  password: ''
+u1: !ruby/object:MealPlan::User
+  username: u1
+  password: ''
+u2: !ruby/object:MealPlan::User
+  username: u2
+  password: ''

@@ -6,7 +6,7 @@ module MealPlan
   # Class to hold user data
   class User
     @meal_plan = nil
-    attr_reader :username, :password
+    attr_reader :username, :password, :meal_plan
     def initialize(username, password)
       validate_username(username)
       @username = username
@@ -21,7 +21,7 @@ module MealPlan
       if !UserData.valid_length?(username)
         raise UsernameError,
               'Username length must be between 1 and 20 characters.'
-      elsif UserData.invalid_symbols?(username)
+      elsif !UserData.valid_symbols?(username)
         raise UsernameError, 'Symbols must be alphanumeric.'
       elsif !UserData.unique_username?(username)
         raise UsernameError, 'Username is already taken.'
